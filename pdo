@@ -1,0 +1,58 @@
+<?php
+
+require 'connect.php';
+$pdo = new \PDO(DSN, USER, PASS);
+
+$query = "SELECT * FROM friend";
+$statement = $pdo->query($query);
+$friends = $statement->fetchAll();
+
+
+?>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<h1>LISTE DE MES AMIS</h1>
+<ul> 
+    <?php foreach($friends as $friend) 
+    {
+     ?>
+     <li><?php echo $friend['firstname']. ' ' . $friend['lastname'];?></li><?php
+    }?>
+</ul>
+
+
+<form action method="post">
+
+  <label for="firstname">firstname:</label>
+    <input type="text" name="firstname" id="firstname" required>
+  
+    <label for="lastname">lastname:</label>
+<input type="text" name="lastname" id="lastname" required>
+
+
+<input type="submit" value= soumettre>
+
+</form>
+</body>
+</html>
+<?php
+
+if($_POST) {
+    $data = array_map('trim', $_POST);
+
+$connection = new PDO(DSN, USER, PASS);
+$query = 'INSERT INTO friend(firstname, lastname) VALUES(:firstname,:lastname);';
+$stmt = $connection->prepare($query);
+$stmt->bindValue(':firstname', $data['firstname'], PDO::PARAM_STR);
+$stmt->bindValue(':lastname', $data['lastname'], PDO::PARAM_STR);
+$stmt->execute();
+header('Location: http://localhost:8001/quetepdo.php');
+exit;
+}
